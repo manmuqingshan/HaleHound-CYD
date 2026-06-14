@@ -29,7 +29,7 @@
 
 **Multi-protocol offensive security toolkit for the ESP32 Cheap Yellow Display**
 
-Version **v3.5.5** | By [JesseCHale](https://github.com/JesseCHale) | [HaleHound.com](https://halehound.com)
+Version **v3.6.0** | By [JesseCHale](https://github.com/JesseCHale) | [HaleHound.com](https://halehound.com)
 
 ---
 
@@ -91,7 +91,7 @@ The signal wires (SPI, CS, CE, GDO0, GDO2, TX_EN, RX_EN) still connect directly 
 ## Menu Tree
 
 ```
-HALEHOUND-CYD v3.5.5
+HALEHOUND-CYD v3.6.0
 │
 ├── WiFi
 │   ├── Packet Monitor         Real-time 802.11 frame capture + graph
@@ -128,7 +128,7 @@ HALEHOUND-CYD v3.5.5
 │   ├── Replay Attack          Record + replay RF signals (300-928 MHz)
 │   ├── Brute Force            Automated code gen (Princeton/CAME/Nice/PT2262)
 │   ├── SubGHz Scorch           Wideband SubGHz disruption
-│   ├── Spectrum Analyzer      SubGHz RF spectrum display
+│   ├── Spectrum Analyzer      33-bar spectrum, peak-hold, band focus, noise-floor cal
 │   ├── Saved Profile          Load saved signals from SD
 │   ├── Tesla Charge           Open any Tesla charge port (US/EU/BOTH)
 │   └── .Sub Read              Flipper .sub file browser + transmitter
@@ -138,7 +138,8 @@ HALEHOUND-CYD v3.5.5
 │   ├── Card Reader            MIFARE sector data dump
 │   ├── Card Clone             Clone UID to writable card
 │   ├── Key Brute Force        MIFARE key A/B brute force
-│   └── Card Emulate           Replay captured card UID
+│   ├── Card Emulate           Replay captured card UID
+│   └── NTAG Tools             NTAG213/215/216 read, dump, NDEF, write, lock, password
 │
 ├── Jam Detect
 │   ├── WiFi Guardian          Detect deauth floods
@@ -173,8 +174,17 @@ HALEHOUND-CYD v3.5.5
 │   ├── Set PIN                4-digit boot lock
 │   └── CC1101 Module          Standard HW-863 ↔ E07 PA module
 │
-└── About
-    └── Firmware info + armed module list
+├── About
+│   └── Firmware info + armed module list
+│
+├── Drone
+│   ├── Drone Detect           Dual-radio passive RID + BLE/WiFi fingerprint
+│   ├── RID Spoof              Broadcast ASTM F3411 Remote ID (WiFi + BLE)
+│   ├── Drone Jelly            Full-spectrum drone jam + live equalizer
+│   └── Drone Deauth           Targeted deauth of a drone control link
+│
+└── Skimmer
+    └── Hunt                   Bluetooth card-skimmer hunter (BETA)
 ```
 
 ---
@@ -220,6 +230,8 @@ External CC1101 required. All TX at setPA(12) max power. Optional E07-433M20S PA
 
 External PN532 V3 in SPI mode. Scan, read, clone, brute force, and emulate MIFARE Classic cards.
 
+- **NTAG Tools** — NFC Tools-style suite for NTAG213/215/216 (and Ultralight EV1). Model ID, full page dump, NDEF decode (URL + Text), multi-record composer, and the write side: erase, permanent read-only lock, password set/remove, auth-on-write. On-screen keyboard for URL/text/password entry.
+
 ### Jam Detect
 
 Defensive modules. WiFi Guardian catches deauth floods, SubGHz Sentinel detects carrier jamming, 2.4GHz Watchdog spots broadband disruption, Full Spectrum monitors all bands at once.
@@ -231,6 +243,19 @@ Defensive modules. WiFi Guardian catches deauth floods, SubGHz Sentinel detects 
 - **IoT Recon** — Connect to WiFi, scan the subnet, fingerprint services (HTTP, RTSP, Telnet, MQTT, Modbus, XMEye), brute force default credentials. Dual-core: networking on Core 0, UI on Core 1. Drop custom creds in `/creds.txt` on SD.
 - **Flock You** — Passive detection of Flock Safety ALPR cameras and Raven/ShotSpotter sensors via BLE fingerprinting. 22 OUI prefixes, 8 Raven GATT service UUIDs, firmware version estimation. GPS-tagged saves to SD.
 - **Loot** — Unified browser for all captured data: wardriving CSVs, EAPOL handshakes, WhisperPair/BLE Predator loot, IoT Recon reports, credentials.
+
+### Drone
+
+Anti-drone toolkit. Detection runs two radios at once — the NRF24 sniffs for BLE drone presence while the ESP32 sweeps WiFi in promiscuous mode, dual-core so neither side blocks the other.
+
+- **Drone Detect** — Flags drones by ASTM F3411 Remote ID plus SSID and BLE fingerprint. Two independent radios, passive RX.
+- **RID Spoof** — Broadcasts an ASTM F3411 Remote ID beacon over WiFi (Beacon + NaN) and BLE.
+- **Drone Jelly** — Full-spectrum drone jam with a live equalizer readout.
+- **Drone Deauth** — Targeted deauth against a drone's control link.
+
+### Skimmer Hunter (BETA)
+
+Bluetooth credit-card-skimmer hunter. Multi-signal scoring plus an active confirmation pass to cut false positives. Built and shipping for field testing — treat it as **beta** until the hardware validation pass is done.
 
 ### VALHALLA Protocol
 
